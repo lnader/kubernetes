@@ -35,7 +35,7 @@ type RESTStorage interface {
 	// Although it can return an arbitrary error value, IsNotFound(err) is true for the returned error value err when the specified resource is not found.
 	Delete(id string) (<-chan interface{}, error)
 
-	Extract(body []byte) (interface{}, error)
+	Extract(body []byte, queryParams map[string][]string) (interface{}, error)
 	Create(interface{}) (<-chan interface{}, error)
 	Update(interface{}) (<-chan interface{}, error)
 }

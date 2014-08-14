@@ -67,7 +67,7 @@ func (storage *BuildConfigRegistryStorage) Delete(id string) (<-chan interface{}
 }
 
 // Extract deserializes user provided data into an buildconfigapi.BuildConfig.
-func (storage *BuildConfigRegistryStorage) Extract(body []byte) (interface{}, error) {
+func (storage *BuildConfigRegistryStorage) Extract(body []byte, queryParams map[string][]string) (interface{}, error) {
 	result := buildconfigapi.BuildConfig{}
 	err := api.DecodeInto(body, &result)
 	return result, err

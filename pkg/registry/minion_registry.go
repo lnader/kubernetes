@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"sort"
 	"sync"
-
 	"github.com/GoogleCloudPlatform/kubernetes/pkg/api"
 	"github.com/GoogleCloudPlatform/kubernetes/pkg/apiserver"
 	"github.com/GoogleCloudPlatform/kubernetes/pkg/labels"
@@ -119,7 +118,7 @@ func (storage *MinionRegistryStorage) Get(id string) (interface{}, error) {
 	return storage.toApiMinion(id), err
 }
 
-func (storage *MinionRegistryStorage) Extract(body []byte) (interface{}, error) {
+func (storage *MinionRegistryStorage) Extract(body []byte, queryParams map[string][]string) (interface{}, error) {
 	var minion api.Minion
 	err := api.DecodeInto(body, &minion)
 	return minion, err

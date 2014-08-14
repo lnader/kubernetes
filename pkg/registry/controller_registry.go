@@ -19,7 +19,6 @@ package registry
 import (
 	"fmt"
 	"time"
-
 	"code.google.com/p/go-uuid/uuid"
 	"github.com/GoogleCloudPlatform/kubernetes/pkg/api"
 	"github.com/GoogleCloudPlatform/kubernetes/pkg/apiserver"
@@ -73,7 +72,7 @@ func (storage *ControllerRegistryStorage) Delete(id string) (<-chan interface{},
 }
 
 // Extract deserializes user provided data into an api.ReplicationController.
-func (storage *ControllerRegistryStorage) Extract(body []byte) (interface{}, error) {
+func (storage *ControllerRegistryStorage) Extract(body []byte, queryParams map[string][]string) (interface{}, error) {
 	result := api.ReplicationController{}
 	err := api.DecodeInto(body, &result)
 	return result, err

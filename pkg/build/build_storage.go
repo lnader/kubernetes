@@ -19,22 +19,27 @@ package build
 import (
 	"fmt"
 	"time"
-
+    
 	"code.google.com/p/go-uuid/uuid"
 	"github.com/GoogleCloudPlatform/kubernetes/pkg/api"
 	"github.com/GoogleCloudPlatform/kubernetes/pkg/apiserver"
 	"github.com/GoogleCloudPlatform/kubernetes/pkg/build/buildapi"
+	"github.com/GoogleCloudPlatform/kubernetes/pkg/buildconfig"
 	"github.com/GoogleCloudPlatform/kubernetes/pkg/labels"
+	"github.com/golang/glog"
 )
 
 // BuildRegistryStorage is an implementation of RESTStorage for the api server.
 type BuildRegistryStorage struct {
 	registry BuildRegistry
+	buildConfigRegistry buildconfig.BuildConfigRegistry
+	
 }
 
-func NewBuildRegistryStorage(registry BuildRegistry) apiserver.RESTStorage {
+func NewBuildRegistryStorage(registry BuildRegistry, buildConfigRegistry buildconfig.BuildConfigRegistry) apiserver.RESTStorage {
 	return &BuildRegistryStorage{
 		registry: registry,
+		buildConfigRegistry: buildConfigRegistry,
 	}
 }
 
@@ -67,10 +72,37 @@ func (storage *BuildRegistryStorage) Delete(id string) (<-chan interface{}, erro
 }
 
 // Extract deserializes user provided data into an buildapi.Build.
-func (storage *BuildRegistryStorage) Extract(body []byte) (interface{}, error) {
+func (storage *BuildRegistryStorage) Extract(body []byte, queryParams map[string][]string) (interface{}, error) {
 	result := buildapi.Build{}
-	err := api.DecodeInto(body, &result)
-	return result, err
+	values := queryParams["plugin"]
+	//if plugin specified then parse body using plugin
+	if len(values) > 0 {
+		
+		
+	} else {
+		err := api.DecodeInto(body, &result)
+		if err != nil {
+			return nil, err
+		}
+	}
+	
+	values = queryParams["build_config_id"]
+	if len(values) > 0 {
+		buildConfigID := values[0]
+		glog.Infof("config id %s", buildConfigID)
+		buildConfig, err := storage.buildConfigRegistry.GetBuildConfig(buildConfigID)
+		glog.Infof("config %#v", buildConfig)
+		if err != nil {
+			return nil, err
+		}
+		result.Config.Type = buildConfig.Type
+		result.Config.SourceURI = buildConfig.SourceURI
+		result.Config.ImageTag = buildConfig.ImageTag   
+		result.Config.BuilderImage = buildConfig.BuilderImage
+		result.Config.SourceRef = buildConfig.SourceRef
+	}
+	
+	return result, nil
 }
 
 // Create registers a given new Build instance to storage.registry.

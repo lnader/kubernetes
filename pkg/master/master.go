@@ -125,7 +125,7 @@ func (m *Master) init(cloud cloudprovider.Interface, podInfoGetter client.PodInf
 		"replicationControllers": registry.NewControllerRegistryStorage(m.controllerRegistry, m.podRegistry),
 		"services":               registry.MakeServiceRegistryStorage(m.serviceRegistry, cloud, m.minionRegistry),
 		"minions":                registry.MakeMinionRegistryStorage(m.minionRegistry),
-		"builds":                 build.NewBuildRegistryStorage(m.buildRegistry),
+		"builds":                 build.NewBuildRegistryStorage(m.buildRegistry, m.buildConfigRegistry),
 		"buildConfigs":           buildconfig.NewBuildConfigRegistryStorage(m.buildConfigRegistry),
 	}
 }

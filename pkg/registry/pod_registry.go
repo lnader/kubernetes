@@ -21,7 +21,7 @@ import (
 	"strings"
 	"sync"
 	"time"
-
+    
 	"code.google.com/p/go-uuid/uuid"
 	"github.com/GoogleCloudPlatform/kubernetes/pkg/api"
 	"github.com/GoogleCloudPlatform/kubernetes/pkg/apiserver"
@@ -189,7 +189,7 @@ func (storage *PodRegistryStorage) Delete(id string) (<-chan interface{}, error)
 	}), nil
 }
 
-func (storage *PodRegistryStorage) Extract(body []byte) (interface{}, error) {
+func (storage *PodRegistryStorage) Extract(body []byte, queryParams map[string][]string) (interface{}, error) {
 	pod := api.Pod{}
 	err := api.DecodeInto(body, &pod)
 	return pod, err

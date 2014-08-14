@@ -158,6 +158,8 @@ func (s *APIServer) handleREST(w http.ResponseWriter, req *http.Request) {
 func (s *APIServer) handleRESTStorage(parts []string, req *http.Request, w http.ResponseWriter, storage RESTStorage) {
 	sync := req.URL.Query().Get("sync") == "true"
 	timeout := parseTimeout(req.URL.Query().Get("timeout"))
+	queryParams := req.URL.Query()
+
 	switch req.Method {
 	case "GET":
 		switch len(parts) {
@@ -198,7 +200,7 @@ func (s *APIServer) handleRESTStorage(parts []string, req *http.Request, w http.
 			internalError(err, w)
 			return
 		}
-		obj, err := storage.Extract(body)
+		obj, err := storage.Extract(body, queryParams)
 		if IsNotFound(err) {
 			notFound(w, req)
 			return
@@ -246,7 +248,7 @@ func (s *APIServer) handleRESTStorage(parts []string, req *http.Request, w http.
 			internalError(err, w)
 			return
 		}
-		obj, err := storage.Extract(body)
+		obj, err := storage.Extract(body, queryParams)
 		if IsNotFound(err) {
 			notFound(w, req)
 			return

@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
+    
 	"github.com/GoogleCloudPlatform/kubernetes/pkg/api"
 	"github.com/GoogleCloudPlatform/kubernetes/pkg/apiserver"
 	"github.com/GoogleCloudPlatform/kubernetes/pkg/cloudprovider"
@@ -139,7 +139,7 @@ func (sr *ServiceRegistryStorage) Delete(id string) (<-chan interface{}, error) 
 	}), nil
 }
 
-func (sr *ServiceRegistryStorage) Extract(body []byte) (interface{}, error) {
+func (sr *ServiceRegistryStorage) Extract(body []byte, queryParams map[string][]string) (interface{}, error) {
 	var svc api.Service
 	err := api.DecodeInto(body, &svc)
 	return svc, err
